@@ -2,22 +2,21 @@
   <!--
   Exercice 1
 
-  1) Créer les données (data) name et age
+ OK 1) Créer les données (data) name et age
 
-  2) Reliez ces données aux deux champs de saisie <input /> correspondants
+ OK 2) Reliez ces données aux deux champs de saisie <input /> correspondants
 
-  3) Afficher le nom et l'âge dans le cadre beige <div class="description"> (première ligne en gras)
+ OK 3) Afficher le nom et l'âge dans le cadre beige <div class="description"> (première ligne en gras)
 
-  4) Utilisez une propriété calculée pour afficher l'âge plus 10 ans (deuxième ligne en gras)
+ OK 4) Utilisez une propriété calculée pour afficher l'âge plus 10 ans (deuxième ligne en gras)
 
-  5) Afficher le nombre de caractères du nom (troisième ligne en gras)
+ Ok 5) Afficher le nombre de caractères du nom (troisième ligne en gras)
+OK 6) Utilisez un filtre pour afficher le nom en majuscules (quatrième ligne en gras)
 
-  6) Utilisez un filtre pour afficher le nom en majuscules (quatrième ligne en gras)
-
-  7) N'affichez le cadre beige que si un nom et un âge valide ont été saisis.
+ OK 7) N'affichez le cadre beige que si un nom et un âge valide ont été saisis.
      Sinon, affichez le cadre rouge <div class="no-details">
 
-  8) Utilisez v-show pour afficher les messages d'erreur à côté des champs
+ OK 8) Utilisez v-show pour afficher les messages d'erreur à côté des champs
      si le nom comporte plus de 15 caractères et l'âge dépasse 100 ans
      ou est plus petit que 1.
 
@@ -37,25 +36,27 @@
       <div className="row q-mb-md">
         <label>Nom:</label>
         <input v-model="nom">
-        <label className="error">Maximum 15 caractères
+        <label v-show="nbLettreNom > 15" className="error">Maximum 15 caractères
         </label>
       </div>
       <div className="row q-mb-md">
         <label>Age:</label>
         <input v-model="age">
-        <label className="error">Veuillez entrer un âge compris entre 1 et 100</label>
+        <label v-show="age < 1 || age >= 100" className="error">Veuillez entrer un âge compris entre 1 et 100</label>
       </div>
       <div className="row">
         <button>Générer une personne</button>
       </div>
     </div>
-    <div className="description q-mb-lg">
+    <!--Cadre beige -->
+    <div v-if="age >= 1 && age < 100 && nbLettreNom < 15" className="description q-mb-lg">
       <p>Mon nom est <b>{{ nom }}</b> et j'ai <b>{{ age }}</b> ans.</p>
       <p>Dans 10 ans, j'aurai <b>{{ agePlus10 }}</b> ans.</p>
-      <p>Mon nom se compose de <b>5</b> caractères.</p>
-      <p>Mon nom en majuscules est <b>{{ nom }}</b>.</p>
+      <p>Mon nom se compose de <b>{{ nbLettreNom }}</b> caractères.</p>
+      <p>Mon nom en majuscules est <b>{{ nomEnMaj }}</b>.</p>
     </div>
-    <div className="no-details">
+    <!--Cadre rouge -->
+    <div v-else className="no-details">
       <p>Veuillez entrer un nom et un âge valide !</p>
     </div>
   </q-page>
@@ -72,8 +73,17 @@ export default {
   },
   computed: {
     agePlus10 () {
-      
-      return this.age + 10
+      if (isNaN(this.age) || this.age === '') {
+        return 0
+      }
+      // chaque texte provenant d'Internet doit être reconverti en nombre pour être calculé
+      return parseInt(this.age) + 10
+    },
+    nbLettreNom () {
+      return this.nom.length
+    },
+    nomEnMaj () {
+      return this.nom.toUpperCase()
     }
   }
 }
